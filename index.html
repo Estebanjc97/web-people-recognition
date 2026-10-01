@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reconocimiento facial</title>
+<style>
+  body { font-family: system-ui, sans-serif; max-width: 680px; margin: 2rem auto; padding: 0 1rem; }
+  #stage { position: relative; }
+  #stage video, #stage canvas { width: 100%; display: block; }
+  #stage canvas { position: absolute; inset: 0; }
+  form { display: flex; gap: .5rem; margin: 1rem 0; }
+  input { flex: 1; padding: .5rem; }
+  button { padding: .5rem 1rem; }
+  .opt { display: block; margin: .25rem 0; }
+
+  /* Filtro cámara de seguridad: se activa con la clase .cctv en #stage */
+  #camInfo { display: none; }
+  .cctv video { filter: grayscale(1) sepia(.3) hue-rotate(60deg) contrast(1.4) brightness(.9) blur(.4px); }
+  .cctv::after { /* líneas de escaneo + viñeta + parpadeo */
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background:
+      repeating-linear-gradient(transparent 0 2px, rgba(0,0,0,.25) 2px 4px),
+      radial-gradient(ellipse at center, transparent 55%, rgba(0,0,0,.7));
+    animation: flicker .15s infinite alternate;
+  }
+  @keyframes flicker { to { opacity: .85; } }
+  .cctv #camInfo {
+    display: flex; justify-content: space-between; position: absolute; inset: auto 0 0 0; z-index: 1;
+    padding: .5rem .75rem; font: bold clamp(10px, 2.5vw, 15px) monospace; color: #fff; text-shadow: 0 0 3px #000;
+  }
+  .rec { color: #f33; animation: blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+</style>
+</head>
+<body>
+<h1>Reconocimiento facial</h1>
+<p id="statusEl">Cargando modelos…</p>
+<div id="stage"><video id="video" autoplay muted playsinline></video><canvas id="overlay"></canvas>
+  <div id="camInfo"><span>CAM 01 <span class="rec">● REC</span></span><span id="clockEl"></span></div>
+</div>
+<form id="register">
+  <label for="nameEl" hidden>Nombre</label>
+  <input id="nameEl" placeholder="Nombre de la persona frente a la cámara" required>
+  <button>Registrar</button>
+  <button type="button" id="clearBtn">Borrar todos</button>
+</form>
+<label class="opt"><input type="checkbox" id="hackEl"> Modo profiler estilo Watch Dogs (datos ficticios)</label>
+<label class="opt"><input type="checkbox" id="cctvEl"> Filtro cámara de seguridad</label>
+<ul id="people"></ul>
+
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
